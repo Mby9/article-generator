@@ -1,0 +1,27 @@
+# General
+.DS_Store
+.idea/
+.vscode/
+*.log
+.env
+.env.*
+
+# Backend (Java / Spring Boot)
+backend/target/
+backend/bin/
+backend/.settings/
+backend/.classpath
+backend/.project
+backend/.mvn/
+backend/mvnw
+backend/mvnw.cmd
+*.class
+*.jar
+*.war
+
+# Frontend (Node / React / Vite)
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.npm/
+frontend/coverage/
