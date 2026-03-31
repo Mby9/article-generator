@@ -18,7 +18,7 @@ function App() {
   const [tone, setTone] = useState(() => localStorage.getItem('tone') || 'Professional');
   const [format, setFormat] = useState(() => localStorage.getItem('format') || 'LinkedIn Post');
   const [articleLength, setArticleLength] = useState(() => localStorage.getItem('articleLength') || '300');
-  
+
   // Theme State
   const [isDark, setIsDark] = useState(() => {
     const saved = localStorage.getItem('theme');
@@ -26,22 +26,22 @@ function App() {
     const hour = new Date().getHours();
     return hour >= 18 || hour < 6; // Default dark between 6pm and 6am
   });
-  
+
   // Ideation State
   const [idea, setIdea] = useState('');
   const [ideasList, setIdeasList] = useState([]);
   const [selectedIdeas, setSelectedIdeas] = useState([]);
-  
+
   // Workspace State
   const [draft, setDraft] = useState('');
   const [feedback, setFeedback] = useState(null);
-  
+
   // Final Stage State
   const [hooksList, setHooksList] = useState([]);
   const [selectedHook, setSelectedHook] = useState(null);
-  
+
   const [loading, setLoading] = useState(null); // 'ideas', 'draft', 'refine', 'proofread', 'hooks'
-  
+
   // Toast State
   const [toast, setToast] = useState(null); // { message, type }
 
@@ -90,7 +90,7 @@ function App() {
   const handleExpandIdeas = async (append = false) => {
     if (!idea.trim()) return;
     setLoading('ideas');
-    
+
     try {
       if (!append) {
         setIdeasList([]);
@@ -114,7 +114,7 @@ function App() {
   };
 
   const handleIdeaToggle = (idealm) => {
-    setSelectedIdeas(prev => 
+    setSelectedIdeas(prev =>
       prev.includes(idealm) ? prev.filter(i => i !== idealm) : [...prev, idealm]
     );
   };
@@ -122,7 +122,7 @@ function App() {
   const handleDraftArticle = async () => {
     if (selectedIdeas.length === 0) return;
     setLoading('draft');
-    
+
     try {
       const combinedIdeas = selectedIdeas.map(i => '- ' + i).join('\n\n');
       const res = await draftArticle(combinedIdeas, userContext, tone, format, articleLength);
@@ -164,14 +164,14 @@ function App() {
     try {
       const res = await proofreadArticle(draft);
       setFeedback(res);
-      
+
       // Auto-Apply Polish logic
       if (res && res.feedback) {
         setToast({ message: 'Score received. Auto-improving draft based on feedback...', type: 'info' });
         const autoInstructions = "Address the following feedback to improve the draft strictly: " + (Array.isArray(res.feedback) ? res.feedback.join(' ') : res.feedback);
         await handleRefineArticle(draft, autoInstructions);
       }
-      
+
     } catch (err) {
       setLoading(null);
       setToast({ message: 'Failed to proofread article.', type: 'error' });
@@ -181,7 +181,7 @@ function App() {
   const handleGenerateHooks = async () => {
     if (!draft.trim()) return;
     setLoading('hooks');
-    
+
     try {
       const res = await generateHooks(draft, userContext, format);
       setHooksList(parseIdeas(res.result));
@@ -207,7 +207,7 @@ function App() {
 
   const downloadTxt = (text) => {
     const element = document.createElement("a");
-    const file = new Blob([text], {type: 'text/plain'});
+    const file = new Blob([text], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
     element.download = "draft-article.txt";
     document.body.appendChild(element);
@@ -229,8 +229,8 @@ function App() {
   return (
     <div className="app-container">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      
-      <button 
+
+      <button
         className="theme-toggle-btn"
         onClick={() => setIsDark(!isDark)}
       >
@@ -238,7 +238,7 @@ function App() {
       </button>
 
       <header style={{ textAlign: 'center', marginBottom: '40px' }}>
-        <h1 style={{ color: 'var(--primary)', fontSize: '2.5rem', marginBottom: '8px' }}>Antigravity Copywriter</h1>
+        <h1 style={{ color: 'var(--primary)', fontSize: '2.5rem', marginBottom: '8px' }}>AI Copywriter</h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>Turn raw ideas into engaging, professional posts</p>
       </header>
 
@@ -246,7 +246,7 @@ function App() {
 
       <main style={{ maxWidth: '800px', margin: '0 auto' }}>
         {currentStep === 1 && (
-          <ProfileSetup 
+          <ProfileSetup
             userContext={userContext} setUserContext={setUserContext}
             tone={tone} setTone={setTone}
             format={format} setFormat={setFormat}
@@ -256,7 +256,7 @@ function App() {
         )}
 
         {currentStep === 2 && (
-          <IdeaStage 
+          <IdeaStage
             idea={idea} setIdea={setIdea}
             userContext={userContext}
             handleExpandIdeas={handleExpandIdeas}
@@ -271,7 +271,7 @@ function App() {
         )}
 
         {currentStep === 3 && (
-          <WorkspaceStage 
+          <WorkspaceStage
             draft={draft} setDraft={setDraft}
             feedback={feedback}
             loading={loading}
@@ -283,7 +283,7 @@ function App() {
         )}
 
         {(currentStep === 4 || currentStep === 5) && (
-          <FinalStage 
+          <FinalStage
             draft={draft}
             hooksList={hooksList} setHooksList={setHooksList}
             selectedHook={selectedHook} setSelectedHook={(hl) => { setSelectedHook(hl); setCurrentStep(5); }}
@@ -295,10 +295,10 @@ function App() {
         )}
       </main>
 
-      <Toast 
-        message={toast?.message} 
-        type={toast?.type} 
-        onClose={() => setToast(null)} 
+      <Toast
+        message={toast?.message}
+        type={toast?.type}
+        onClose={() => setToast(null)}
       />
     </div>
   );
